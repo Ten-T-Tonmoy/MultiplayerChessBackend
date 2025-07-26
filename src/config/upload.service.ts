@@ -1,6 +1,6 @@
 import { cloudinaryUploader } from "./cloudinary.config.js";
 import { upload } from "./multer.config.js";
-import { app } from "../server.js";
+import app from "../app.js";
 import { Request, Response } from "express";
 
 // interface MulterRequest extends Request {
@@ -38,7 +38,7 @@ app.get("/upload-test", (req: Request, res: Response) => {
  * to use the multer and cloudinary shit
  *  import upload->single on Local Storage->returns path
  *  import cloudinaryUploader ->url
- * 
- * 
+ *
+ *
  * fs.unlikSync(path)
  */
