@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+//3 steps ... change schema >>>  then
+//npx prisma migrate dev --name init
+//use PrismaClient as prsima
+//prisma.user.findMany() /seller.findOne()
+// npx prisma studio => loadl Ui to browse DB
+
+//demo DATABASE_URL="postgresql://postgres:<password here>@localhost:5432/<Database Name here>?schema=public"
+
+//relations one2many and many2one same shit its  BookList        BookList? @relation(fields: [bookListId], references: [id])
+// many to many just add likedBy         User[]    @relation("likedBooks") on both table
+generator client {
+  provider = "prisma-client-js" //remove shitty 2nd line of this and import from @prisma/client
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//@@unique([filed1,filed2]) composite unique
+//@@index composite index  add things u wanna search by
+
+
+/*
+---------------------------------Definitive Schema and relations-------------------------------------------------------------
+enum BookType {
+  poetry
+  drama
+  fiction
+}
+
+model Book {
+  id              String    @id @default(cuid())
+  bookType        BookType //poetry drama academic bla bla shit
+  publishDate     DateTime?
+  availableStores String[]
+  //Review[]  reviews         String[] 
+  ratingSum       Int       @default(0)
+  likedBy         User[]    @relation("likedBooks")
+  createdAt       DateTime  @default(now())
+  review          Review[]
+  BookList        BookList? @relation(fields: [bookListId], references: [id])
+  bookListId      String?
+ 
+
+  @@index([genre])
+  @@index([keywords])
+}
+
+*/
+model User {
+  id           String  @id @default(cuid())
+  name         String
+  email        String?
+  region       String?
+  gender       Boolean //definately binary
+  profilePhoto String?
+  coverPhoto   String?
+  about        String?
+  rating       Int
+}
+
+model MatchHistory {
+  id               String @id @default(cuid())
+  totalMatchPlayed Int
+  won              Int
+  lost             Int
+  peakRating       Int
+
+}
+
+//future modular cases
