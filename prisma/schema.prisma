@@ -93,6 +93,18 @@ model User {
   bestStreak    Int @default(0)
 
   //relations
+  whiteGames Game[] @relation("whitePlayer") //one to many
+  BlackGames Game[] @relation("blackPlayer") //one to many
+
+  pastGames GameHistory[]
+
+  /**
+   * puzzlesSolved   PuzzleSolved[]
+   * puzzlesCreated  Puzzle[]      @relation("PuzzleCreator")
+   * achievements    UserAchievement[]
+   * sentFriendRequests     Friendship[] @relation("FriendRequester")
+   * receivedFriendRequests Friendship[] @relation("FriendReceiver")
+   */
 }
 
 model Setting {
@@ -123,12 +135,120 @@ model Setting {
   @@map("settings")
 }
 
-model MatchHistory {
-  id               String @id @default(cuid())
-  totalMatchPlayed Int
-  won              Int
-  lost             Int
-  peakRating       Int
+enum GameModeType {
+  BLITZ
+  BULLET
+  RAPID
+  CLASSICAL
+  CUSTOM
+}
+
+enum GameStatusType {
+  WAITING
+  IN_PROGRESS
+  FINISHED
+  ABANDONED
+}
+
+enum ResultType {
+  WHITE_WINS
+  BLACK_WINS
+  DRAW
+  ABANDONED
+}
+
+enum FriendshipStatusType {
+  REQUEST_PENDING
+  ACCEPTED
+  REJECTED
+  BLOCKED
+}
+
+model Game {
+  id     String @id @default(cuid())
+  roomId String @unique
+
+  whiteId String
+  white   User   @relation("whitePlayer", fields: [whiteId], references: [id])
+  blackId String
+  black   User   @relation("blackPlayer", fields: [blackId], references: [id])
+
+  timeControlView String
+  isRatedGame     Boolean        @default(true)
+  isPublicGame    Boolean        @default(true)
+  gamestatus      GameStatusType @default(WAITING)
+  result          ResultType?
+  winnerId        String? // gotta send from frontend?
+
+  //realtime play tracking
+
+  currentBoard String @default("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
+  moves        Json   @default("[]") //string array wont work
+  moveCount    Int    @default(0)
+
+  whiteTimeRemaining Int //in secs
+  blackTimeRemaining Int //in secs
+  incrementTime      Int @default(0) //extraa
+
+  //timeRelatedHistory
+  startedAt DateTime?
+  endedAt   DateTime?
+  createdAt DateTime  @default(now())
+
+  //viewers 
+  currentSepctatorsCount Int @default(0)
+  peakSepctatorsCount    Int @default(0)
+
+  //for live messages
+  liveChatLog LiveChatMessages[]
+  GameHistory GameHistory[]
+
+  @@map("games")
+}
+
+model LiveChatMessages {
+  id String @id @default(cuid())
+
+  username    String
+  message     String
+  timestamp   DateTime @default(now())
+  GameRelated Game?    @relation(fields: [gameId], references: [id])
+  gameId      String?
+
+  @@map("livechats")
+}
+
+model GameHistory {
+  id          String @id @default(cuid())
+  gameId      String
+  gameRelated Game   @relation(fields: [gameId], references: [id])
+
+  player                 User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                 String?
+  //ingame info
+  opponent               String //id?
+  result                 ResultType
+  playedAs               String //black or white
+  gameMode               GameModeType
+  timeControl            String
+  //performance
+  userRatingPreMatch     Int
+  userRatingPostMatch    Int
+  opponentRatingPreMatch Int
+  //bruh why need rating change
+
+  //game analyistics
+  moves    Json //move history!
+  accuracy Float? //move accurarcy
+
+  blunders   Int @default(0) //losing big piece
+  mistake    Int @default(0) //tight situation or forgeting to eat?
+  inaccuracy Int @default(0) //jani na
+
+  //POTG 
+  playOfTheGame Json @default("[]")
+
+  @@map("gamehistory")
 }
 
 //future modular cases
