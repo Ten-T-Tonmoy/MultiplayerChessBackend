@@ -1,57 +1,60 @@
 # Entities and Controllers for them
 
-## entity: ``user`` (first seperate from authors)
+## entity: ``user`` 
  
 - flow
     - create User
-        - create Books
-            - create lists
-            - create reviews
-            - make comments/votes
+        - CURD operation of user
+            - will have necessary info
+            - can have friends/follower (a filter to who can view my games live)
+            - will have ratings, games statistics bla bla whatever info chess platform needs a player to have 
+
+
+        - can create Games (live streamable)
+            - random opponent or play with playerID/roomID or friend
+            - each game willl have game mode option
+            - matchMaking logic nd rating based opponent choosing
+            - each game a socket room 2 players active
+            - if game public there will be a chat stream box on side (twitch like)
+            - point distribution 
+            - play moves history record and show to viewers if game is public
+            - winner and loser deciding
+            - assigning/modifying rating/rank to each participant
         
-        - create articles (link up bt not direct independent)
-        - timeLine?
-        - a bucketPage where all added books go
-            -from that u can make list 
-                -list popUp to select new or existing ones
-        - a profile page of several sections
+        - can modify personal infos(basic user curd)
+    
+
+
+ ## entity: ``setting`` 
+
+ - flow
+    - default setting assigned for each player
+    - its like max rating of opponent 
+    - interface color/bla bla 
+    - language? might be hard to implement
+    - 
+            
         
+ ## entity: ``puzzles or lessons``
 
+- flow
+    - create puzzle
+        - players can create own problems and puzzle 
+        - players can solve existing problems/puzzles made by others
+        - puzzles will have by rating/tag filter 
+        
+ ## entity: ``achievements``
 
-    - create Author (indirect)
-        - non active will just have a page to display 
-            - will wait for admin approval for edits
-        - active =>
-            - same display page
-            - USER features=> make list/article/comment/
+ - flow
+    - complete achievements
+        - by default every player will have 0 achievements
+        - there will be login streak achievement/win/lose/rating/friend count/whatever possible chess game achievements list
+        - achievement will unlock titles/banners/frames bla bla
 
-
-
-    - create StoryBook(approval?personal?public)
-        - books with chapters 
-            - chapters with themes/animation?
-            - cover photo/bla bla
-            - ai image generation
-            - tags /certifications
-            - need ideas? 
-
-                - AI idea Generation for stories
-
-    - create Article
-        - title content whatever 
-        - gonna be CURD ?
-        - tags /certifications
-        - 
-
-    - Home feed
-        - facts/news/quotes/stories/books?
-        - 
-
-- contents
-  - user curd=> independent 
-  - other entities will later get connected
-  - endpoints total
-    ```
-       '/addUser' => will add user  
-    ```
-
+## entity: ``gameHistory``
+- flow 
+    - create GameHistory (it wont be deleteable or updateable)
+        - each games log (winner,loser,participant,peak viewer)
+        - a POTG like moment capturing method? 
+        - bruh tf! timeStamp saving and reusing that to recreate viideo like potg moment replay!! 
+        - player moves array history (gonna help for replay)

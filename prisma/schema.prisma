@@ -26,44 +26,101 @@ datasource db {
 //@@unique([filed1,filed2]) composite unique
 //@@index composite index  add things u wanna search by
 
+/**
+ * ---------------------------------Definitive Schema and relations-------------------------------------------------------------
+ * enum BookType {
+ * poetry
+ * drama
+ * fiction
+ * }
+ * model Book {
+ * id              String    @id @default(cuid())
+ * bookType        BookType //poetry drama academic bla bla shit
+ * publishDate     DateTime?
+ * availableStores String[]
+ * //Review[]  reviews         String[]
+ * ratingSum       Int       @default(0)
+ * likedBy         User[]    @relation("likedBooks")
+ * createdAt       DateTime  @default(now())
+ * review          Review[]
+ * BookList        BookList? @relation(fields: [bookListId], references: [id])
+ * bookListId      String?
+ * @@index([genre])
+ * @@index([keywords])
+ * }
+ */
 
-/*
----------------------------------Definitive Schema and relations-------------------------------------------------------------
-enum BookType {
-  poetry
-  drama
-  fiction
+enum AvatarType {
+  teenboy
+  casualMan
+  suitedMan
+  ladyHat
+  suitedLady
+  gownLady
+  mysterious
+  schoolBoy
+  schoolGirl
 }
 
-model Book {
-  id              String    @id @default(cuid())
-  bookType        BookType //poetry drama academic bla bla shit
-  publishDate     DateTime?
-  availableStores String[]
-  //Review[]  reviews         String[] 
-  ratingSum       Int       @default(0)
-  likedBy         User[]    @relation("likedBooks")
-  createdAt       DateTime  @default(now())
-  review          Review[]
-  BookList        BookList? @relation(fields: [bookListId], references: [id])
-  bookListId      String?
- 
-
-  @@index([genre])
-  @@index([keywords])
-}
-
-*/
 model User {
-  id           String  @id @default(cuid())
-  name         String
+  id         String      @id @default(cuid())
+  name       String
+  username   String
+  password   String
+  avatar     AvatarType?
+  about      String?
+  isOnline   Boolean     @default(false)
+  lastActive DateTime    @default(now())
+  createdAt  DateTime    @default(now()) // always createdAt to track self reminder
+
   email        String?
-  region       String?
+  country      String?
   gender       Boolean //definately binary
   profilePhoto String?
   coverPhoto   String?
-  about        String?
-  rating       Int
+
+  blitzRating     Int @default(1000)
+  rapidRating     Int @default(1000)
+  classicalRating Int @default(1000)
+  bulletRating    Int @default(1000) //might avoid this
+
+  //history
+  totalGames    Int @default(0)
+  wins          Int @default(0)
+  loses         Int @default(0)
+  draws         Int @default(0)
+  currentStreak Int @default(0)
+  bestStreak    Int @default(0)
+
+  //relations
+}
+
+model Setting {
+  id String @id @default(cuid())
+
+  //prefs
+  maxOpponentRating           Int     @default(2000)
+  minOpponentRating           Int     @default(500)
+  onlineStatusPubliclyVisible Boolean @default(true)
+  allowSpectators             Boolean @default(true)
+  acceptPublicFriendRequests  Boolean @default(true)
+
+  //ui  gotta make enums for these?
+  theme        String  @default("classic")
+  boardColor   String  @default("brown")
+  pieceColor   String  @default("standard")
+  language     String  @default("endglish") //as if i can change
+  soundEnabled Boolean @default(true)
+  // animationsPlay Boolean @default(true)
+
+  //privacy stuffs
+  profilePublic     Boolean @default(true)
+  gameHistoryPublic Boolean @default(true)
+  statusPublic      Boolean @default(true)
+
+  updatedAt DateTime @updatedAt //just trackin changes
+
+  @@map("settings")
 }
 
 model MatchHistory {
@@ -72,7 +129,6 @@ model MatchHistory {
   won              Int
   lost             Int
   peakRating       Int
-
 }
 
 //future modular cases
